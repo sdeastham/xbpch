@@ -83,7 +83,8 @@ def open_bpchdataset(filename, fields=[], categories=[],
     ds = xr.Dataset.load_store(store)
     # Record what the file object underlying the store which we culled this
     # Dataset from is so that we can clean it up later
-    ds._file_obj = store._bpch
+    #ds._file_obj = store._bpch
+    ds.attrs['_file_obj'] = store._bpch
 
     # Handle CF corrections
     if decode_cf:
@@ -203,8 +204,9 @@ def open_mfbpchdataset(paths, concat_dim='time', compat='no_conflicts',
     # Concatenate over time
     combined = xr.auto_combine(datasets, compat=compat, concat_dim=concat_dim)
 
-    combined._file_obj = _MultiFileCloser(bpch_objs)
+    #combined._file_obj = _MultiFileCloser(bpch_objs)
     combined.attrs = datasets[0].attrs
+    combined.attrs['_file_obj'] = _MultiFileCloser(bpch_objs)
     ts = get_timestamp()
     fns_str = " ".join(paths)
     combined.attrs['history'] = (
